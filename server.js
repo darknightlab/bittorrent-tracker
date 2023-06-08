@@ -202,7 +202,7 @@ class Server extends EventEmitter {
           return html
         }
 
-        if (req.method === 'GET' && (req.url === '/stats' || req.url === '/stats.json')) {
+        if (req.method === 'GET' && (req.url === '/stats' || req.url === '/stats.json' || req.url === '/torrents.json' || req.url === '/peers.json')) {
           infoHashes.forEach(infoHash => {
             const peers = this.torrents[infoHash].peers
             const keys = peers.keys
@@ -273,6 +273,12 @@ class Server extends EventEmitter {
               <h3>Clients:</h3>
               ${printClients(stats.clients)}
             `.replace(/^\s+/gm, '')) // trim left
+          } else if (req.url === '/torrents.json') {
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify(this.torrents))
+          } else if (req.url === '/peers.json') {
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify(allPeers))
           }
         }
       })
@@ -507,8 +513,8 @@ class Server extends EventEmitter {
 
         response.info_hash = common.hexToBinary(params.info_hash)
 
-        // WebSocket tracker should have a shorter interval – default: 2 minutes
-        response.interval = Math.ceil(this.intervalMs / 1000 / 5)
+        // WebSocket tracker should have a shorter interval – default: 12 seconds
+        response.interval = Math.ceil(this.intervalMs / 1000 / 50)
       }
 
       // Skip sending update back for 'answer' announce messages – not needed
