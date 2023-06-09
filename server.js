@@ -514,7 +514,7 @@ class Server extends EventEmitter {
         response.info_hash = common.hexToBinary(params.info_hash)
 
         // WebSocket tracker should have a shorter interval – default: 12 seconds
-        response.interval = Math.ceil(this.intervalMs / 1000 / 50)
+        response.interval = Math.ceil(this.intervalMs / 1000 / 100)
       }
 
       // Skip sending update back for 'answer' announce messages – not needed
